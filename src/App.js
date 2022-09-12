@@ -101,10 +101,13 @@ export default function App() {
     setOpen(!open);
   };
 
+
+
   // Data fetching from DB. Would not recommend changing.
   // Reference video for snapshot functionality https://www.youtube.com/watch?v=ig91zc-ERSE
 
   const [entries, setEntries] = useState([]);
+
 
   useEffect(() => {
 
@@ -122,6 +125,8 @@ export default function App() {
     })
   }, [currentUser]);
 
+
+
   // Main content of homescreen. This is displayed conditionally from user auth status
 
   function mainContent() {
@@ -136,6 +141,7 @@ export default function App() {
           <Grid item xs={12}>
             <EntryTable entries={entries} />
           </Grid>
+          <Button> </Button>
         </Grid>
       )
     } else return (

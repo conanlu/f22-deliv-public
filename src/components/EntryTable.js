@@ -8,6 +8,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import EntryModal from './EntryModal';
 import { getCategory } from '../utils/categories';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import { BookmarkAddOutlined, BookmarkOutlined } from '@mui/icons-material';
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+
+
+
 
 // Table component that displays entries on home screen
 
@@ -21,6 +27,7 @@ export default function EntryTable({ entries }) {
                   <TableCell align="right">Link</TableCell>
                   <TableCell align="right">User</TableCell>
                   <TableCell align="right">Category</TableCell>
+                  <TableCell align="right">Priority</TableCell>
                   <TableCell align="right">Open</TableCell>
                </TableRow>
             </TableHead>
@@ -36,6 +43,7 @@ export default function EntryTable({ entries }) {
                      <TableCell align="right"><Link href={entry.link}>{entry.link}</Link></TableCell>
                      <TableCell align="right">{entry.user}</TableCell>
                      <TableCell align="right">{getCategory(entry.category).name}</TableCell>
+                     <TableCell align="right">{entry.marked ? <BookmarkIcon color="primary" /> : <BookmarkBorderOutlinedIcon />}</TableCell>
                      <TableCell sx={{ "padding-top": 0, "padding-bottom": 0 }} align="right">
                         <EntryModal entry={entry} type="edit" />
                      </TableCell>

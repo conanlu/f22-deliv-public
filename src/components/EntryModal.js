@@ -8,12 +8,14 @@ import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel'
 import * as React from 'react';
 import { useState } from 'react';
 import { categories } from '../utils/categories';
-import { addEntry } from '../utils/mutations';
+import { addEntry, updateEntry, deleteEntry } from '../utils/mutations';
 
 // Modal component for individual entries.
 
@@ -35,6 +37,19 @@ export default function EntryModal({ entry, type, user }) {
    const [link, setLink] = useState(entry.link);
    const [description, setDescription] = useState(entry.description);
    const [category, setCategory] = React.useState(entry.category);
+   const [marked, setMarked] = useState(entry.marked);
+
+   const [dialogOpen, setDialogOpen] = React.useState(false);
+
+   const handleDialogClickOpen = () => {
+      setDialogOpen(true);
+    };
+    
+    const handleDialogClose = () => {
+      setDialogOpen(false);
+    };
+
+
 
    // Modal visibility handlers
 
@@ -44,6 +59,7 @@ export default function EntryModal({ entry, type, user }) {
       setLink(entry.link);
       setDescription(entry.description);
       setCategory(entry.category);
+      setMarked(entry.marked);
    };
 
    const handleClose = () => {
@@ -60,7 +76,9 @@ export default function EntryModal({ entry, type, user }) {
          user: user?.displayName ? user?.displayName : "GenericUser",
          category: category,
          userid: user?.uid,
+         marked: marked,
       };
+
 
       addEntry(newEntry).catch(console.error);
       handleClose();
@@ -68,7 +86,40 @@ export default function EntryModal({ entry, type, user }) {
 
    // TODO: Add Edit Mutation Handler
 
+   const handleEdit = () => {
+      const existingEntry = {
+         name: name,
+         link: link,
+         description: description,
+         category: category,
+         id: entry.id,
+         marked: marked,
+      }
+      updateEntry(existingEntry).catch(console.error);
+      handleClose();
+   }
+
    // TODO: Add Delete Mutation Handler
+
+   const handleDelete = () => {
+
+      const existingEntry = {
+         id:entry.id,
+         marked: marked
+      }
+
+      if(!marked){
+         deleteEntry(existingEntry).catch(console.error);
+         handleClose();
+
+      }
+
+   }
+
+
+   const handleDeleteAll = () =>{
+
+   }
 
    // Button handlers for modal opening and inside-modal actions.
    // These buttons are displayed conditionally based on if adding or editing/opening.
@@ -87,6 +138,8 @@ export default function EntryModal({ entry, type, user }) {
       type === "edit" ?
          <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
+            <Button style={{color: '#ef5350'}} onClick={handleDelete}>Delete</Button>
+            <Button variant="contained" onClick={handleEdit}>Save Changes</Button>
          </DialogActions>
          : type === "add" ?
             <DialogActions>
@@ -133,6 +186,13 @@ export default function EntryModal({ entry, type, user }) {
                   onChange={(event) => setDescription(event.target.value)}
                />
 
+   
+               <FormControlLabel id="marked" margin="normal" control={<Checkbox />}  label="Mark as priority? " checked={marked}
+               onChange={(event) => setMarked(event.target.checked)}
+                />
+
+
+
                <FormControl fullWidth sx={{ "margin-top": 20 }}>
                   <InputLabel id="demo-simple-select-label">Category</InputLabel>
                   <Select
@@ -148,6 +208,10 @@ export default function EntryModal({ entry, type, user }) {
             </DialogContent>
             {actionButtons}
          </Dialog>
+
+
+
+         
       </div>
    );
 }
