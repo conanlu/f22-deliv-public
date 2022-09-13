@@ -23,6 +23,10 @@ import EntryModal from './components/EntryModal';
 import { mainListItems } from './components/listItems';
 import { db, SignInScreen } from './utils/firebase';
 import { emptyEntry } from './utils/mutations';
+import { getDatabase, ref, child, get } from "firebase/database";
+import { addEntry, updateEntry, deleteEntry } from './utils/mutations';
+
+
 
 // MUI styling constants
 
@@ -109,6 +113,18 @@ export default function App() {
   const [entries, setEntries] = useState([]);
 
 
+  const clear = () => {
+    var i = 0;
+    for(i = 0; i < entries.length; i++){
+      if(!entries[i].marked){
+        deleteEntry(entries[i]);
+      }
+    }
+    
+  }
+
+
+
   useEffect(() => {
 
     // ! Database query filters entries for current user. DO NOT CHANGE, editing this query may cause it to fail.
@@ -122,6 +138,7 @@ export default function App() {
       // Set Entries state variable to the current snapshot
       // For each entry, appends the document ID as an object property along with the existing document data
       setEntries(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+
     })
   }, [currentUser]);
 
@@ -140,8 +157,10 @@ export default function App() {
           </Grid>
           <Grid item xs={12}>
             <EntryTable entries={entries} />
+
+            <Button style={{color: '#ef5350'}} onClick={clear}>Clear All </Button>
           </Grid>
-          <Button> </Button>
+          
         </Grid>
       )
     } else return (

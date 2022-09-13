@@ -42,3 +42,20 @@ export async function deleteEntry(entry) {
       await deleteDoc(doc(db, "entries", entry.id));
    
 }
+
+
+export async function deleteAll(){
+
+   db.collection("entries").get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id);
+      });
+  });
+
+   // await deleteDoc(doc(db, "entries", entry.id));
+
+
+   // const promises = toDelete.map((docId) => deleteDoc(doc(db, "entries", docId)))
+
+}

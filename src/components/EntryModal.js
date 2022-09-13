@@ -16,6 +16,9 @@ import * as React from 'react';
 import { useState } from 'react';
 import { categories } from '../utils/categories';
 import { addEntry, updateEntry, deleteEntry } from '../utils/mutations';
+import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
+
 
 // Modal component for individual entries.
 
@@ -38,6 +41,7 @@ export default function EntryModal({ entry, type, user }) {
    const [description, setDescription] = useState(entry.description);
    const [category, setCategory] = React.useState(entry.category);
    const [marked, setMarked] = useState(entry.marked);
+   const [triedToDelete, setTriedToDelete] = useState(false);
 
    const [dialogOpen, setDialogOpen] = React.useState(false);
 
@@ -63,7 +67,11 @@ export default function EntryModal({ entry, type, user }) {
    };
 
    const handleClose = () => {
-      setOpen(false);
+
+      
+         setOpen(false);
+      
+
    };
 
    // Mutation handlers
@@ -99,6 +107,17 @@ export default function EntryModal({ entry, type, user }) {
       handleClose();
    }
 
+   const updateTriedToDelete = (checked) => {
+
+      if(triedToDelete){
+         if(!checked){
+            setTriedToDelete(false);
+
+         }
+      }
+  
+   }
+
    // TODO: Add Delete Mutation Handler
 
    const handleDelete = () => {
@@ -109,9 +128,12 @@ export default function EntryModal({ entry, type, user }) {
       }
 
       if(!marked){
+         setTriedToDelete(false);
          deleteEntry(existingEntry).catch(console.error);
          handleClose();
-
+      }
+      else{
+         setTriedToDelete(true);
       }
 
    }
@@ -187,9 +209,17 @@ export default function EntryModal({ entry, type, user }) {
                />
 
    
-               <FormControlLabel id="marked" margin="normal" control={<Checkbox />}  label="Mark as priority? " checked={marked}
-               onChange={(event) => setMarked(event.target.checked)}
+               <FormControlLabel id="marked" margin="normal" control={<Checkbox />}  label="Add bookmark" checked={marked}
+               onChange={(event) => {setMarked(event.target.checked);
+                  updateTriedToDelete(event.target.checked);}}
                 />
+
+
+      {triedToDelete ? 
+        <Alert severity="error">You cannot delete bookmarked links!</Alert>
+        :
+        ""
+    }
 
 
 
@@ -204,7 +234,8 @@ export default function EntryModal({ entry, type, user }) {
                   >
                      {categories.map((category) => (<MenuItem value={category.id}>{category.name}</MenuItem>))}
                   </Select>
-               </FormControl>
+               </FormControl>  
+
             </DialogContent>
             {actionButtons}
          </Dialog>
